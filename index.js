@@ -8,6 +8,8 @@ const port = process.env.PORT || 5000
 app.use(cors({
     origin: [
       'http://localhost:5173',
+      'https://task-management-c93ed.web.app',
+      'https://task-management-c93ed.firebaseapp.com/'
     ],
   }))
 app.use(express.json())
@@ -49,24 +51,27 @@ async function run() {
         res.send(result)
     })
 
+     // get delete service
+ app.get("/allTask/delete/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = {
+      _id: new ObjectId(id),
+    };
+    const result = await TaskCollection.findOne(query);
+    console.log(result);
+    res.send(result);
+  });
 
-    // app.get("/allTask/:userEmail", (req, res) => {
-    //     const userEmail = req.params.email; // Assuming you are filtering tasks by user email
-    //     // Retrieve tasks for the specific user
-    //     const userTasks = tasks.filter((task) => task.email === userEmail);
-    //     res.json(userTasks);
-    // });
-    
-    // app.put("/updateTaskOrder/:userEmail", (req, res) => {
-    //     const userEmail = req.params.email;
-    //     const updatedTaskOrder = req.body.tasks;
-    
-    //     // Update the task order in your database or in-memory store
-    //     // For simplicity, we'll update the order in the local 'tasks' array
-    //     tasks = updatedTaskOrder.map((taskId) => tasks.find((task) => task._id === taskId));
-    
-    //     res.json({ message: "Task order updated successfully" });
-    // });
+
+  // services delete
+  app.delete('/allTask/delete/:id', async (req, res) => {
+    const id = req.params.id;
+    console.log('please delete', id)
+    const query = { _id: new ObjectId(id) };
+    const result = await TaskCollection.deleteOne(query);
+    res.send(result)
+  })
+  
 
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
